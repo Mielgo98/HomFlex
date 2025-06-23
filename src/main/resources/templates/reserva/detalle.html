@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/head :: head('Detalle Reserva - HomeFlex')}">
+    <link rel="stylesheet" th:href="@{/css/reserva.css}" />
+    <title>Detalle Reserva - HomeFlex</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="container my-4">
+        <div class="mb-4">
+            <a th:href="@{/reservas/mis-reservas}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Volver a mis reservas
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 th:text="${reserva.tituloPropiedad}">Título de la propiedad</h3>
+                <span class="badge fs-6"
+                      th:classappend="${
+                          reserva.estado != null ?
+                            (T(com.example.demo.reserva.model.EstadoReserva).SOLICITADA.equals(reserva.estado) ? 'bg-warning' :
+                             T(com.example.demo.reserva.model.EstadoReserva).PENDIENTE_PAGO.equals(reserva.estado) ? 'bg-info' :
+                             T(com.example.demo.reserva.model.EstadoReserva).PAGO_VERIFICADO.equals(reserva.estado) ? 'bg-primary' :
+                             T(com.example.demo.reserva.model.EstadoReserva).CONFIRMADA.equals(reserva.estado) ? 'bg-success' :
+                             'bg-danger')
+                          : 'bg-secondary'
+                      }"
+                      th:text="${reserva.estado}">Estado</span>
+            </div>
+            <div class="card-body">
+                <!-- Datos de la propiedad -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <img th:src="${reserva.fotoPropiedad}" class="img-fluid rounded" alt="Imagen de propiedad">
+                    </div>
+                    <div class="col-md-8">
+                        <p><i class="bi bi-geo-alt-fill me-1"></i><span th:text="${reserva.ciudadPropiedad + ', ' + reserva.paisPropiedad}">Ciudad, País</span></p>
+                        <p><i class="bi bi-calendar3 me-1"></i><strong>Entrada:</strong> <span th:text="${#temporals.format(reserva.fechaInicio, 'dd/MM/yyyy')}">dd/MM/yyyy</span></p>
+                        <p><i class="bi bi-calendar3-week me-1"></i><strong>Salida:</strong> <span th:text="${#temporals.format(reserva.fechaFin, 'dd/MM/yyyy')}">dd/MM/yyyy</span></p>
+                        <p><i class="bi bi-people-fill me-1"></i><strong>Huéspedes:</strong> <span th:text="${reserva.numHuespedes}">0</span></p>
+                        <p><i class="bi bi-cash-coin me-1"></i><strong>Importe total:</strong> <span th:text="${#numbers.formatDecimal(reserva.precioTotal,1,'COMMA',2,'POINT')} + ' €'">0,00 €</span></p>
+                        <p><i class="bi bi-hash me-1"></i><strong>Código de reserva:</strong> <span th:text="${reserva.codigoReserva}">ABC123</span></p>
+                    </div>
+                </div>
+
+                <!-- Pagos asociados -->
+                <div>
+                    <h5>Pagos</h5>
+                    <div class="text-end mb-4">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalPagos">
+                            <i class="bi bi-list-ul me-1"></i> Ver historial completo de pagos
+                        </button>
+                    </div>
+                </div>
+
+     <!-- Pagos asociados (sin botón de historial) -->
+<div>
+    <h5>Pagos</h5>
+    <div th:if="${#lists.isEmpty(pagos)}" class="text-muted mb-2">No hay pagos registrados</div>
+    <div th:if="${not #lists.isEmpty(pagos)}" class="mb-2">
+        <table class="table table-sm table-bordered align-middle">
+            <thead class="table-light">
+                <tr><th>Monto</th><th>Estado</th><th>Fecha</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="pago : ${pagos}">
+                    <td th:text="${#numbers.formatDecimal(pago.monto,1,'COMMA',2,'POINT')}">100.00</td>
+                    <td th:text="${pago.estado}">COMPLETADO</td>
+                    <td th:text="${#temporals.format(pago.fechaCreacion, 'dd/MM/yyyy HH:mm')}">21/05/2025</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+       
+
+                <!-- Aquí mantén los botones de acción que ya tenías -->
+            </div>
+        </div>
+
+        <!-- Valoración -->
+        <div class="card shadow-sm mt-4" th:if="${esInquilino && 
+                                    T(com.example.demo.reserva.model.EstadoReserva).CONFIRMADA.name() == reserva.estado.name() && 
+                                    reserva.fechaFin.isBefore(T(java.time.LocalDate).now())}">
+            <div class="card-header bg-light"><h4>¿Cómo fue tu experiencia?</h4></div>
+            <div class="card-body">
+                <p>Tu estancia ha finalizado. Nos encantaría conocer tu opinión sobre esta propiedad.</p>
+                <a th:href="@{'/valoraciones/nueva?reservaId=' + ${reserva.id}}" class="btn btn-primary">
+                    <i class="bi bi-star-fill me-1"></i> Valorar mi estancia
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

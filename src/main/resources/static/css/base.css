@@ -1,0 +1,16 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f7f7f7; color: #333; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* header.css */
+.navbar-brand {
+  font-weight: bold;
+  color: #007bff !important;
+}
+.nav-link:hover {
+  color: #007bff !important;
+}
+.dropdown-item:active {
+  background-color: #007bff;
+}

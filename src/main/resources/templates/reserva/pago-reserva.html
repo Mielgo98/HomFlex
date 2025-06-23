@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/head :: head(${reserva.titulo} + ' – Pago')"></head>
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container">
+      <div class="row mt-4">
+        <div class="col-md-8 offset-md-2">
+          <div class="card">
+            <div class="card-header">
+              <h2 th:text="'Pago de la Reserva #' + ${reserva.id}">Pago de la Reserva #123</h2>
+            </div>
+            <div class="card-body">
+              <p><strong>Propiedad:</strong> <span th:text="${reserva.propiedad.titulo}">Título Propiedad</span></p>
+              <p><strong>Fecha Inicio:</strong> <span th:text="${#dates.format(reserva.fechaInicio, 'dd/MM/yyyy')}">01/05/2025</span></p>
+              <p><strong>Fecha Fin:</strong> <span th:text="${#dates.format(reserva.fechaFin, 'dd/MM/yyyy')}">07/05/2025</span></p>
+              <p><strong>Precio Total:</strong> <span th:text="${reserva.precioTotal}">500.00</span> <span th:text="${reserva.moneda} ?: 'EUR'">EUR</span></p>
+            </div>
+            <div class="card-footer text-end">
+              <!-- Botón modificado para iniciar el proceso de pago -->
+              <a th:href="@{/pago/iniciar(reservaId=${reserva.id})}"
+                 class="btn btn-primary">
+                Pagar ahora
+              </a>
+              <a th:href="@{/reservas/mis-reservas}" class="btn btn-secondary ms-2">
+                Volver a Mis Reservas
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

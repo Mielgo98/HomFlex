@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Solicitar Reserva - HomeFlex')}"></head>
+<body>
+
+  <header th:replace="~{fragments/header :: header}"></header>
+
+  <main class="container">
+    <h1>Solicitar Reserva</h1>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
+
+    <form th:action="@{/reservas/nueva}" th:object="${solicitudDTO}" method="post">
+      <input type="hidden" th:field="*{propiedadId}"/>
+
+      <div class="mb-3">
+        <label for="fechaInicio" class="form-label">Fecha de inicio</label>
+        <input type="date" id="fechaInicio" class="form-control" th:field="*{fechaInicio}"/>
+        <div class="text-danger" th:errors="*{fechaInicio}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="fechaFin" class="form-label">Fecha de fin</label>
+        <input type="date" id="fechaFin" class="form-control" th:field="*{fechaFin}"/>
+        <div class="text-danger" th:errors="*{fechaFin}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="numHuespedes" class="form-label">Número de huéspedes</label>
+        <!-- Usamos 'numHuespedes' y 'propiedad.capacidad' -->
+        <select id="numHuespedes"
+                class="form-select"
+                th:field="*{numHuespedes}">
+          <option th:each="i : ${#numbers.sequence(1, propiedad.capacidad)}"
+                  th:value="${i}"
+                 th:text="${ i + (i == 1 ? ' huésped' : ' huéspedes') }">
+          </option>
+        </select>
+        <div class="text-danger" th:errors="*{numHuespedes}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="comentarios" class="form-label">Comentarios</label>
+        <textarea id="comentarios"
+                  class="form-control"
+                  th:field="*{comentarios}"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Solicitar</button>
+    </form>
+  </main>
+
+  <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
